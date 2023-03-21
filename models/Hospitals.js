@@ -106,8 +106,8 @@ const Schema = new mongoose.Schema({
     {
       type: [
         {
-          Type: { type: int },
-          available: { type: int },
+          Type: { type: String },
+          available: { type: Boolean},
           contact: { type: String },
         },
       ],
