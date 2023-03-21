@@ -2,6 +2,8 @@ const User = require("../models/Users");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const S_Key = process.env.SKEY;
+const bcrypt = require("bcryptjs");
+const RET = process.env.RET;
 const generateAccessToken = (user) => {
   return jwt.sign({ id: user._id }, S_Key, { expiresIn: "150" });
 };
@@ -25,31 +27,46 @@ const varify = (req, res, next) => {
   }
 };
 
-const LoginController = (req, res) => {
-  const { email, password } = req.body;
-
-  // Simple validation
-  if (!email || !password) {
-    return res.status(400).json({ msg: "Please enter all fields" });
-  }
-  // Check for existing user
-  const user = User.find({ email: email });
-  if (!user)
-    return res
-      .status(400)
-      .json({ msg: "User Does not exist , Invalid Credentials" });
-  // Validate password
-  if (user) {
-    const accessToken = generateAccessToken(user);
-    const refreshToken = jwt.sign(user, process.env.RET);
-    refreshTokens.push(refreshToken);
-    res.json({
-      username: user.username,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    });
-  } else {
-    res.status(400).json({ msg: "Invalid credentials" });
+const LoginController = async (req, res) => {
+  console.log(req.body);
+  const email = req.body.email;
+  const password = req.body.password;
+  try {
+    // Simple validation
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Please enter all fields" });
+    }
+    // Check for existing user
+    const user = await User.findOne({ email: email });
+    if (!user)
+      return res
+        .status(400)
+        .json({ msg: "User Does not exist , Invalid Credentials" });
+    // Validate password
+    if (user) {
+      // varify password with bcrypt
+      console.log(user);
+      bcrypt.compare(user.password, password, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          const accessToken = generateAccessToken(user);
+          const refreshToken = jwt.sign({ userId: user._id }, process.env.RET);
+          refreshTokens.push(refreshToken);
+          res.json({
+            username: user.username,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          });
+          console.log(result); // true
+        }
+      });
+    } else {
+      res.status(400).json({ msg: "Invalid credentials" });
+    }
+  } catch (err) {
+    // console.log(err);
+    res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
   }
 };
 
