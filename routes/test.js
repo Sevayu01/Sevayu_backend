@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const { RegController } = require("../controllers/test");
+const { UpdateController } = require("../controllers/test");
+const { DeleteController } = require("../controllers/test");
+const { GetController } = require("../controllers/test");
+router.post("/register", RegController);
+router.put("/update", UpdateController);
+router.delete("/delete", DeleteController);
+router.get("/getAll", GetController);
+module.exports = router;
