@@ -11,8 +11,14 @@ app.use(cors());
 const port = process.env.PORT || 5000;
 dotenv.config();
 const uri = process.env.uri;
-app.use("/api/auth", require("./routes/user_auth"));
-
+app.use("/api/auth/user", require("./routes/user_auth"));
+app.use('/api/auth/hospital', require('./routes/hospital_auth')); 
+app.use('/api/doctor', require('./routes/doctors'));
+app.use('/api/test', require('./routes/test'));
+//app.use('/api/user', require('./routes/user'));
+// app.use('/api/hospital', require('./routes/hospital'));
+// app.use('/api/booking', require('./routes/booking'));
+app.use('/api/bloodbank', require('./routes/bloodbank'));
 mongoose.set("strictQuery", true);
 
 app.listen(port, () => {

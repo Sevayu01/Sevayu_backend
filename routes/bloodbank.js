@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const { RegController } = require("../controllers/bloodbank");
+const { UpdateController } = require("../controllers/bloodbank");
+const { DeleteController } = require("../controllers/bloodbank");
+const { GetController } = require("../controllers/bloodbank");
+router.post("/register", RegController);
+router.put("/update", UpdateController);
+router.delete("/delete", DeleteController);
+router.get("/getAll", GetController);
+module.exports = router;
