@@ -89,8 +89,9 @@ const RegController = async (req, res) => {
       city,
       state,
     });
-    await user.save();
-    const accessToken = jwt.sign({ userId: user._id }, S_Key, {
+   const z =  await user.save();
+    
+    const accessToken = jwt.sign({ userId: z._id }, S_Key, {
       expiresIn: "15m",
     });
     const refreshToken = jwt.sign({ userId: user._id }, RET);
