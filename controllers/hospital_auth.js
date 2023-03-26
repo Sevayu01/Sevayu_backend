@@ -86,7 +86,7 @@ if(hosptl){
 // console.log(hosptl)
     const hashPassword = await bcrypt.hash(password, 10);
    const hsptl = new Hospital({
-      name, email, password, postalcode, contact, country, street, city, state, images
+      name, email, password:hashPassword, postalcode, contact, country, street, city, state, images
     });
     await hsptl.save(); 
     const accessToken = jwt.sign({ HospitalId: hsptl._id }, S_Key, {
