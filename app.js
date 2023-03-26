@@ -18,6 +18,8 @@ app.use('/api/test', require('./routes/test'));
 //app.use('/api/user', require('./routes/user'));
 // app.use('/api/hospital', require('./routes/hospital'));
 // app.use('/api/booking', require('./routes/booking'));
+app.use('/api/user', require('./routes/user'));
+app.use('/api/hospital', require('./routes/hospital'));
 app.use('/api/bloodbank', require('./routes/bloodbank'));
 mongoose.set("strictQuery", true);
 
