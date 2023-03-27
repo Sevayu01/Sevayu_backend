@@ -44,6 +44,9 @@ const LoginController = async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Hospital Does not exist , Invalid Credentials" });
+        //compare password with bcrypt it exist  in database
+
+
     // Validate password
     if (hsptl) {
       // varify password with bcrypt
@@ -51,7 +54,7 @@ const LoginController = async (req, res) => {
       bcrypt.compare(hsptl.password, password, (err, result) => {
         if (err) {
           console.log(err);
-        } else {
+        } if(result) {
           const accessToken = generateAccessToken(hsptl);
           const refreshToken = jwt.sign({ HospitalId: hsptl._id }, process.env.RET);
           refreshTokens.push(refreshToken);
@@ -62,6 +65,9 @@ const LoginController = async (req, res) => {
           });
           console.log(result); // true
         }
+        else{
+          res.status(400).json({ msg: "Invalid credentials" });
+        }
       });
     } else {
       res.status(400).json({ msg: "Invalid credentials" });
@@ -71,6 +77,7 @@ const LoginController = async (req, res) => {
     res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
   }
 };
+
 
 const RegController = async (req, res) => {
   try{
