@@ -29,15 +29,15 @@ const varify = (req, res, next) => {
 
 const LoginController = async (req, res) => {
   console.log(req.body);
-  const email = req.body.email;
+  const username = req.body.username;
   const password = req.body.password;
   try {
     // Simple validation
-    if (!email || !password) {
+    if (!username || !password) {
       return res.status(400).json({ msg: "Please enter all fields" });
     }
     // Check for existing user
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ username: username });
     if (!user)
       return res
         .status(400)
@@ -49,7 +49,7 @@ const LoginController = async (req, res) => {
       bcrypt.compare(user.password, password, (err, result) => {
         if (err) {
           console.log(err);
-        } else {
+        } if(result) {
           const accessToken = generateAccessToken(user);
           const refreshToken = jwt.sign({ userId: user._id }, process.env.RET);
           refreshTokens.push(refreshToken);
@@ -60,6 +60,9 @@ const LoginController = async (req, res) => {
           });
           console.log(result); // true
         }
+        else {
+          res.status(400).json({ msg: "Invalid credentials" });
+        }
       });
     } else {
       res.status(400).json({ msg: "Invalid credentials" });
@@ -69,6 +72,7 @@ const LoginController = async (req, res) => {
     res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
   }
 };
+
 
 const RegController = async (req, res) => {
   try {
