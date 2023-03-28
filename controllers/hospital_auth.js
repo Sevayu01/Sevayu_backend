@@ -30,78 +30,73 @@ const varify = (req, res, next) => {
 };
 
 const LoginController = async (req, res) => {
-  console.log(req.body);
+ try{console.log(req.body);
   const email = req.body.email;
   const password = req.body.password;
-  try {
-    // Simple validation
     if (!email || !password) {
       return res.status(400).json({ msg: "Please enter all fields" });
     }
-    // Check for existing Hospital
-    const hsptl = await Hospital.findOne({ email: email });
-    if (!hsptl)
+    else {
+        const hsptl = await Hospital.findOne({ email: email });
+         if (!hsptl)
       return res
         .status(400)
         .json({ msg: "Hospital Does not exist , Invalid Credentials" });
-        //compare password with bcrypt it exist  in database
-
-
-    // Validate password
-    if (hsptl) {
-      // varify password with bcrypt
-      console.log(hsptl);
-      bcrypt.compare(hsptl.password, password, (err, result) => {
-        if (err) {
-          console.log(err);
-        } if(result) {
-          const accessToken = generateAccessToken(hsptl);
-          const refreshToken = jwt.sign({ HospitalId: hsptl._id }, process.env.RET);
-          refreshTokens.push(refreshToken);
-          res.json({
-            Hospitalname: hsptl.name,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-          });
-          console.log(result); // true
-        }
         else{
-          res.status(400).json({ msg: "Invalid credentials" });
+          const ispass =await bcrypt.compare(password, hsptl.password); 
+         if(ispass){
+              const accessToken = generateAccessToken(hsptl);
+            const refreshToken = jwt.sign({ HospitalId: hsptl._id }, process.env.RET);
+            refreshTokens.push(refreshToken);
+            res.json({
+              Hospitalname: hsptl.name,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            });
+         }
+         else{
+          res.json("Password Is Not Correct"); 
+         }
+        
         }
-      });
-    } else {
-      res.status(400).json({ msg: "Invalid credentials" });
     }
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
-  }
-};
 
+
+} 
+  catch(e){
+    console.log(e)
+  }
+
+ 
+};
 
 const RegController = async (req, res) => {
   try{
-
+// console.log(req.body)
     const { name, email, password, postalcode, contact, country, street, city, state, images} =
     req.body;
+    console.log(password)
 const hosptl = await Hospital.findOne({email : email}); 
 if(hosptl){
       return res
         .status(400)
         .json({ message: "This Email Already Assosiated With A Account" });
 }
-// console.log(hosptl)
+// else res.json({message : "ok"})
+// // console.log(hosptl)
     const hashPassword = await bcrypt.hash(password, 10);
+    // res.json(hashPassword)
    const hsptl = new Hospital({
-      name, email, password:hashPassword, postalcode, contact, country, street, city, state, images
+      name, email,password :  hashPassword, postalcode, contact, country, street, city, state, images
     });
-    await hsptl.save(); 
-    const accessToken = jwt.sign({ HospitalId: hsptl._id }, S_Key, {
+   const x =  await hsptl.save(); 
+    // res.json(x)
+ if(x)  { const accessToken = jwt.sign({ HospitalId: hsptl._id }, S_Key, {
       expiresIn: "15m",
     });
         const refreshToken = jwt.sign({ HospitalId: Hospital._id }, RET);
     res.cookie("refreshToken", RET, { httpOnly: true });
-    res.json({ accessToken });
+    res.json({ accessToken });}
   }catch(err){
     console.log(err); 
     res.json(err);
