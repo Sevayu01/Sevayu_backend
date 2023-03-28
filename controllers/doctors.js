@@ -68,6 +68,9 @@ const UpdateController = async (req, res) => {
   try {
     const hosid = req.body.hospitalid;
     let find = await Hospital.findOne({ _id: hosid });
+    if(!find){  
+      return res.json("please enter a valid hospital id")
+      }
     const x = find.doctors.map((data) => {
       if (data.id == req.body.doctorid) {
         data.name = req.body.name;
