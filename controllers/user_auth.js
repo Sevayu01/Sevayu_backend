@@ -28,10 +28,11 @@ const varify = (req, res, next) => {
 };
 
 const LoginController = async (req, res) => {
-  console.log(req.body);
+  
+  try {
+    console.log(req.body);
   const username = req.body.username;
   const password = req.body.password;
-  try {
     // Simple validation
     if (!username || !password) {
       return res.status(400).json({ msg: "Please enter all fields" });
@@ -78,6 +79,7 @@ const RegController = async (req, res) => {
   try {
     const { username, email, password, confirmpassword, street, city, state } =
       req.body;
+    if(password != confirmpassword)return res.json({message:"password should be equal to confirm password"});
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
