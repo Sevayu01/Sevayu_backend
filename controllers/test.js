@@ -7,6 +7,7 @@ const GetController = async (req, res) => {
   const Hsptls = find.Test;
   res.json(Hsptls);
 };
+//
 const RegController = async (req, res) => {
   try {
     const TestData = req.body.Test;
