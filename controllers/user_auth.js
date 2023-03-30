@@ -5,10 +5,10 @@ const S_Key = process.env.SKEY;
 const bcrypt = require("bcryptjs");
 const RET = process.env.RET;
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user._id }, S_Key, { expiresIn: "150" });
+  return jwt.sign({ userId: user._id }, S_Key, { expiresIn: "150" });
 };
 const generateRefreshToken = (user) => {
-  return jwt.sign({ id: user._id }, process.env.RET, { expiresIn: "150" });
+  return jwt.sign({ userId: user._id }, process.env.RET, { expiresIn: "150" });
 };
 const refreshTokens = [];
 const varify = (req, res, next) => {
