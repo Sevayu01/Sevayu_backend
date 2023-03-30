@@ -7,4 +7,20 @@ const gethospital = async (req, res) => {
         res.json({ message: err });
     }
     }
-    module.exports = {gethospital}
+    const getdepartments = async (req, res) => {
+        try {
+            const hospital = await Hospital.findById(req.params.id);
+            let x = []; 
+          if(!hospital){
+            res.json({ message: "No hospital found" });
+          }
+            for (let i = 0; i < hospital.doctors.length; i++) {
+                x.push(hospital.doctors[i].department);
+            }
+            res.json({departments: x}  )
+        } catch (err) {
+            res.json({ message: err });
+        }
+        }
+
+    module.exports = {gethospital, getdepartments}
