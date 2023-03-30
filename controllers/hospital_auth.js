@@ -10,7 +10,7 @@ const generateAccessToken = (Hospital) => {
   return jwt.sign({ id: Hospital._id }, S_Key, { expiresIn: "150" });
 };
 const generateRefreshToken = (Hospital) => {
-  return jwt.sign({ id: Hospital._id }, process.env.RET, { expiresIn: "150" });
+  return jwt.sign({ HospitalId: Hospital._id }, process.env.RET, { expiresIn: "150" });
 };
 const refreshTokens = [];
 const varify = (req, res, next) => {
