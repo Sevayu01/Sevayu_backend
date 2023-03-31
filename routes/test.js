@@ -6,5 +6,5 @@ const { GetController } = require("../controllers/test");
 router.post("/register", RegController);
 router.put("/update", UpdateController);
 router.delete("/delete", DeleteController);
-router.get("/getAll", GetController);
+router.get("/getAll/:hospitalid", GetController);
 module.exports = router;
