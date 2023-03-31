@@ -2,7 +2,7 @@ const Hospital = require("../models/Hospital");
 const mongoose  = require("mongoose");
 
 const GetController = async (req, res) => {
-  const hosid = req.body.hospitalid;
+  const hosid = req.params.hospitalid;
   const find = await Hospital.findOne({ _id: hosid });
   const Hsptls = find.Test;
   res.json(Hsptls);
