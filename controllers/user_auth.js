@@ -97,12 +97,7 @@ const RegController = async (req, res) => {
     });
    const z =  await user.save();
     
-    const accessToken = jwt.sign({ userId: z._id }, S_Key, {
-      expiresIn: "15m",
-    });
-    const refreshToken = jwt.sign({ userId: user._id }, RET);
-    res.cookie("refreshToken", RET, { httpOnly: true });
-    res.json({ accessToken });
+  res.json({ message: "Successfully created account" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
