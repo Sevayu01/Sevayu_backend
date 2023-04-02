@@ -34,7 +34,7 @@ const LoginController = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
     // Simple validation
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({ msg: "Please enter all fields" });
     }
     // Check for existing user
