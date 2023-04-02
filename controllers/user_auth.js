@@ -26,13 +26,11 @@ const varify = (req, res, next) => {
     res.status(401).json({ msg: "You are not authenticated" });
   }
 };
-
 const LoginController = async (req, res) => {
-  
   try {
     console.log(req.body);
-  const email = req.body.email;
-  const password = req.body.password;
+    const email = req.body.email;
+    const password = req.body.password;
     // Simple validation
     if (!email || !password) {
       return res.status(400).json({ msg: "Please enter all fields" });
@@ -44,27 +42,24 @@ const LoginController = async (req, res) => {
         .status(400)
         .json({ msg: "User Does not exist , Invalid Credentials" });
     // Validate password
-    else {
+    else if (user) {
       // varify password with bcrypt
       console.log(user);
-         const ispass =await bcrypt.compare(password, user.password);
-      
-      
-     if(ispass) {
-          const accessToken = generateAccessToken(user);
-          const refreshToken = jwt.sign({ userId: user._id }, process.env.RET);
-          refreshTokens.push(refreshToken);
-          res.status(200).json({
-            username: user.username,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-          });
-          console.log(result); // true
-        }
-        else {
-          res.status(400).json({ msg: "Invalid credentials" });
-        }
-      });
+      const ispass = await bcrypt.compare(password, user.password);
+
+      if (ispass) {
+        const accessToken = generateAccessToken(user);
+        const refreshToken = jwt.sign({ userId: user._id }, process.env.RET);
+        refreshTokens.push(refreshToken);
+        res.status(200).json({
+          username: user.username,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
+        console.log(result); // true
+      } else {
+        res.status(400).json({ msg: "Invalid credentials" });
+      }
     } else {
       res.status(400).json({ msg: "Invalid credentials" });
     }
