@@ -44,17 +44,17 @@ const LoginController = async (req, res) => {
         .status(400)
         .json({ msg: "User Does not exist , Invalid Credentials" });
     // Validate password
-    if (user) {
+    else {
       // varify password with bcrypt
       console.log(user);
-      bcrypt.compare(user.password, password, (err, result) => {
-        if (err) {
-          console.log(err);
-        } if(result) {
+         const ispass =await bcrypt.compare(password, user.password);
+      
+      
+     if(ispass) {
           const accessToken = generateAccessToken(user);
           const refreshToken = jwt.sign({ userId: user._id }, process.env.RET);
           refreshTokens.push(refreshToken);
-          res.json({
+          res.status(200).json({
             username: user.username,
             accessToken: accessToken,
             refreshToken: refreshToken,
