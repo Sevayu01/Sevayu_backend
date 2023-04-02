@@ -31,14 +31,14 @@ const LoginController = async (req, res) => {
   
   try {
     console.log(req.body);
-  const username = req.body.username;
+  const email = req.body.email;
   const password = req.body.password;
     // Simple validation
     if (!username || !password) {
       return res.status(400).json({ msg: "Please enter all fields" });
     }
     // Check for existing user
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ email: email });
     if (!user)
       return res
         .status(400)
