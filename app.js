@@ -12,10 +12,15 @@ const port = process.env.PORT || 5000;
 dotenv.config();
 const uri = process.env.uri;
 app.get("/api/search/:item", async (req, res) => {
+  try{
   const item = await axios.get(
     `https://searchme.onrender.com/product/search/${req.params.item}`
   );
   return res.json(item.data);
+  }
+  catch(e){
+    console.log(e);
+  }
 });
 app.use("/api/auth/user", require("./routes/user_auth"));
 app.use("/api/auth/hospital", require("./routes/hospital_auth"));
