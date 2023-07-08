@@ -7,8 +7,10 @@ const { GetController } = require("../controllers/doctors");
 const verifyAuth = require("../middleware/verifyAuth");
 const authenticateHospital = require("../middleware/hospitalAuth");
 
-router.post("/add",authenticateHospital, RegController);
-router.put("/update",authenticateHospital, UpdateController);
-router.delete("/delete",authenticateHospital, DeleteController);
-router.get("/getAll/:hospitalid",verifyAuth, GetController);
+router.post("/",authenticateHospital, RegController);
+router.put("/",authenticateHospital, UpdateController);
+router.delete("/:doctorid",authenticateHospital, DeleteController);
+router.get("/",verifyAuth, GetController);
+router.get("/:hospitalid",verifyAuth, GetController);
+
 module.exports = router;
