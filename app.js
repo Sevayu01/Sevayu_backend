@@ -21,7 +21,7 @@ app.use('/api/search', require('./routes/search'));
 app.use("/api/auth/user", require("./routes/user_auth"));
 app.use("/api/auth/hospital", require("./routes/hospital_auth"));
 app.use("/api/doctor", require("./routes/doctors"));
-app.use("/api/test", require("./routes/test"));
+app.use("/api/labtest", require("./routes/labtest"));
 //app.use('/api/user', require('./routes/user'));
 // app.use('/api/hospital', require('./routes/hospital'));
 // app.use('/api/booking', require('./routes/booking'));
