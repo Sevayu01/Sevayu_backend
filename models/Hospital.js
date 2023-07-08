@@ -1,8 +1,4 @@
 const mongoose = require("mongoose");
-const { DoctorSchema } = require("./Doctor");
-const { LabtestSchama } = require("./LabTest");
-const { BloodBankSchema } = require("./BloodBank");
-
 const Schema = new mongoose.Schema(
   {
     name: {
@@ -48,12 +44,78 @@ const Schema = new mongoose.Schema(
     },
 
     doctors: {
-      type: [DoctorSchema],
+      type: [
+        {
+          id: {
+            type: String,
+            required: true,
+          },
+          name: {
+            type: String,
+            required: true,
+          },
+          experience: {
+            type: String,
+            required: true,
+          },
+          speciality: {
+            type: String,
+          },
+          contact: {
+            type: String,
+          },
+          department: {
+            type: String,
+            required: true,
+          },
+          Intime: {
+            type: String,
+            required: true,
+          },
+          Outtime: {
+            type: String,
+            required: true,
+          },
+          days: {
+            type: [String],
+            required: true
+          },
+        },
+      ],
     },
     Test: {
-      type: [LabtestSchama],
+      type: [
+        {
+          id: {
+            type: String,
+            required: true,
+          },
+          name: {
+            type: String,
+            required: true,
+          },
+          price: {
+            type: String,
+            required: true,
+          },
+          description: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
     },
-    BloodBank: { type: [BloodBankSchema] },
+    BloodBank: [
+      {
+        type: [
+          {
+            type: { type: String },
+            available: { type: Boolean },
+            contact: { type: String },
+          },
+        ],
+      },
+    ],
   },
   { timestamps: true }
 );
