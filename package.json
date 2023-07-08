@@ -31,7 +31,7 @@
     "meilisearch": "^0.31.1",
     "mongoose": "^7.0.2",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.21",
+    "nodemon": "^2.0.22",
     "socket.io": "^4.6.1",
     "xss-clean": "^0.1.1"
   }

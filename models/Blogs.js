@@ -2,11 +2,9 @@ const mongoose = require("mongoose");
 const Schema = new mongoose.Schema({
     hospital_id: {
         type: String,
-        //  hname, hcontact, hstreet, hcity, hstate, hzip, hemail, hpassword
     },
     author: {
         type: String, 
-        // if not then it will be anonymous
         required: true,
     },
     text: {
