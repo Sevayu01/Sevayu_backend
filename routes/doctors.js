@@ -3,9 +3,12 @@ const { RegController } = require("../controllers/doctors");
 const { UpdateController } = require("../controllers/doctors");
 const { DeleteController } = require("../controllers/doctors");
 const { GetController } = require("../controllers/doctors");
-const authenticateHospital = require("../middleware/authenticateHospital");
-router.post("/register",authenticateHospital, RegController);
+
+const verifyAuth = require("../middleware/verifyAuth");
+const authenticateHospital = require("../middleware/hospitalAuth");
+
+router.post("/add",authenticateHospital, RegController);
 router.put("/update",authenticateHospital, UpdateController);
 router.delete("/delete",authenticateHospital, DeleteController);
-router.get("/getAll/:hospitalid",authenticateHospital, GetController);
+router.get("/getAll/:hospitalid",verifyAuth, GetController);
 module.exports = router;

@@ -1,8 +1,10 @@
 const router = require("express").Router();
 const Hospital = require("../models/Hospital");
-const authenticateHospital = require("../middleware/authenticateHospital");
 const { gethospital,getdepartments } = require("../controllers/Hospital");
-router.get("/",authenticateHospital, gethospital);
-router.get("/departments",authenticateHospital, getdepartments);
+
+const verifyAuth = require("../middleware/verifyAuth");
+
+router.get("/:id",verifyAuth, gethospital);
+router.get("/:id/departments",verifyAuth, getdepartments);
 
 module.exports = router;
