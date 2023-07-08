@@ -1,7 +1,5 @@
 const express = require('express'); 
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const {loginController} = require('../controllers/hospital_auth');
 const {regController} = require('../controllers/hospital_auth');
