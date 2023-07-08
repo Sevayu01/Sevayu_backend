@@ -5,84 +5,79 @@ const GetController = async (req, res) => {
   try{
   const hosid = req.params.hospitalid;
   const find = await Hospital.findOne({ _id: hosid });
-  const Hsptls = find.doctors;
-  res.json(Hsptls);}
+  const doctors = find.doctors;
+  res.json({doctors : doctors});}
   catch(err){
     res.json("error in finding doctors");
     console.log(err)}
 };
 const RegController = async (req, res) => {
   try {
-    const DoctorData = req.body.Doctor;
-    // console.log(DoctorData)
+    const { Doctor: DoctorData, hospitalid } = req.body;
 
-    if (
-      DoctorData.id == null ||
-      DoctorData.id == undefined ||
-      DoctorData.id == "" ||
-      DoctorData.id == " "
-    ) {
-      return res.json("type a valid id");
-    }
-    const hosid = req.body.hospitalid;
-    // console.log(hosid)
-    let find = await Hospital.findOne({ _id: hosid });
-    // console.log(find);
-    if(!find){
-     return res.json("please enter a valid hospital id")
-    }
-    const x = find.doctors.filter((data) => {
-      return data.id == DoctorData.id;
-    });
-    if (x.length > 0) {
-      return res.json("id already exist");
+    if (!DoctorData.id) {
+      return res.json("Please provide a valid ID");
     }
 
-    find.doctors = [...find.doctors, DoctorData];
-    await find.save();
-    res.json(find);
-    // const csrfToken = req.csrfToken();
+    const find = await Hospital.findOneAndUpdate(
+      { _id: hospitalid, "doctors.id": { $ne: DoctorData.id } },
+      { $addToSet: { doctors: DoctorData } },
+      { new: true }
+    );
+
+    if (!find) {
+      return res.json("Please enter a valid hospital ID or the doctor already exists");
+    }
+
+    res.json({ doctors: find.doctors });
   } catch (err) {
-    // res.json("error")
-    // res.jon
-    console.log(err);
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+
 const DeleteController = async (req, res) => {
   try {
-    const hosid = req.body.hospitalid;
-    let find = await Hospital.findOne({ _id: hosid });
-    const x = find.doctors.filter((data) => {
-      return data.id != req.body.doctorid;
-    }); 
-    console.log(x)
-    find.doctors =x; 
-    await find.save();
-    res.json(find);
-  } catch (err) {
-    console.log(err);
-  }
-};
-const UpdateController = async (req, res) => {
+    const { hospitalid } = req.body;
+    const doctorid = req.params.doctorid;
 
-  try {
-    const hosid = req.body.hospitalid;
-    let find = await Hospital.findOne({ _id: hosid });
-    if(!find){  
-      return res.json("please enter a valid hospital id")
-      }
-    const x = find.doctors.map((data) => {
-      if (data.id == req.body.doctorid) {
-        data.name = req.body.name;
-        data.email = req.body.email;
-        data.password = req.body.password;
-        data.contact = req.body.contact;
-      }
-    });
-    await x.save();
+    const updatedHospital = await Hospital.findByIdAndUpdate(
+      hospitalid,
+      { $pull: { doctors: { _id: doctorid } } },
+      { new: true }
+    );
+
+    if (!updatedHospital) {
+      return res.status(404).json({ message: 'Hospital not found' });
+    }
+
+    res.json({msg:"Successfully deleted doctor"});
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
-  // res.json(ListItem);
 };
+
+const UpdateController = async (req, res) => {
+  try {
+    const { hospitalid, doctorid, name, email, password, contact } = req.body;
+
+    const updatedHospital = await Hospital.findOneAndUpdate(
+      { _id: hospitalid, 'doctors._id': doctorid },
+      { $set: { 'doctors.$.name': name, 'doctors.$.email': email, 'doctors.$.password': password, 'doctors.$.contact': contact } },
+      { new: true }
+    );
+
+    if (!updatedHospital) {
+      return res.status(404).json({ message: 'Hospital or doctor not found' });
+    }
+
+    res.json(updatedHospital);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = { GetController, RegController, DeleteController, UpdateController };

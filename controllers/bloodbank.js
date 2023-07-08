@@ -25,7 +25,8 @@ const NewBloodBank = async (req, res) => {
 
 const DeleteController = async (req, res) => {
   try {
-    const { hospitalid, BloodBankid } = req.body;
+    const { hospitalid } = req.body;
+    const BloodBankid = req.params.BloodBankid;
     const updatedHospital = await Hospital.findByIdAndUpdate(
       hospitalid,
       { $pull: { BloodBank: { _id: new Types.ObjectId(BloodBankid) } } },
@@ -34,7 +35,7 @@ const DeleteController = async (req, res) => {
     if (!updatedHospital) {
       return res.status(404).json({ message: 'Hospital not found' });
     }
-    res.json(updatedHospital);
+    res.json({BloodBank : updatedHospital.BloodBank});
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -54,7 +55,7 @@ const UpdateController = async (req, res) => {
       return res.status(404).json({ message: 'Hospital or BloodBank not found' });
     }
 
-    res.json(updatedHospital);
+    res.json({BloodBank: updatedHospital.BloodBank});
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
