@@ -1,135 +1,151 @@
 const User = require("../models/Users");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv").config();
-const S_Key = process.env.SKEY;
 const bcrypt = require("bcryptjs");
-const RET = process.env.RET;
+
 const generateAccessToken = (user) => {
-  return jwt.sign({ userId: user._id }, S_Key, { expiresIn: "150" });
+  return jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
 };
+
 const generateRefreshToken = (user) => {
-  return jwt.sign({ userId: user._id }, process.env.RET, { expiresIn: "150" });
+  return jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+  });
 };
-const refreshTokens = [];
-const varify = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader) {
-    const token = authHeader.split(" ")[1];
-    jwt.verify(token, S_Key, (err, user) => {
-      if (err) {
-        return res.sendStatus(403).json("Error In Varifying Token");
-      }
-      req.user = user;
-      next();
-    });
-  } else {
-    res.status(401).json({ msg: "You are not authenticated" });
-  }
-};
-const LoginController = async (req, res) => {
+
+const registerUser = async (req, res) => {
   try {
-    console.log(req.body);
-    const email = req.body.email;
-    const password = req.body.password;
-    // Simple validation
-    if (!email || !password) {
-      return res.status(400).json({ msg: "Please enter all fields" });
-    }
-    // Check for existing user
-    const user = await User.findOne({ email: email });
-    if (!user)
+    const {
+      username,
+      email,
+      password,
+      confirmPassword,
+      street,
+      city,
+      state,
+    } = req.body;
+
+    if (password !== confirmPassword) {
       return res
         .status(400)
-        .json({ msg: "User Does not exist , Invalid Credentials" });
-    // Validate password
-    else if (user) {
-      // varify password with bcrypt
-      console.log(user);
-      const ispass = await bcrypt.compare(password, user.password);
-
-      if (ispass) {
-        const accessToken = generateAccessToken(user);
-        const refreshToken = jwt.sign({ userId: user._id }, process.env.RET);
-        refreshTokens.push(refreshToken);
-        res.status(200).json({
-          username: user.username,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        });
-        console.log(result); // true
-      } else {
-        res.status(400).json({ msg: "Invalid credentials" });
-      }
-    } else {
-      res.status(400).json({ msg: "Invalid credentials" });
+        .json({ message: "Password and Confirm Password do not match" });
     }
-  } catch (err) {
-    // console.log(err);
-    res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
-  }
-};
 
-
-const RegController = async (req, res) => {
-  try {
-    const { username, email, password, confirmpassword, street, city, state } =
-      req.body;
-    if(password != confirmpassword)return res.json({message:"password should be equal to confirm password"});
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(400)
-        .json({ message: "This Email Already Assosiated With A Account" });
+        .json({ message: "This email is already associated with an account" });
     }
-    const hashPassword = await bcrypt.hash(password, 10);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = new User({
       username,
       email,
-      password: hashPassword,
+      password: hashedPassword,
       street,
       city,
       state,
     });
-   const z =  await user.save();
-    
-  res.json({ message: "Successfully created account" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "OOPS! There Is Error In Server Side" });
-  }
-};
 
-const Refresh = async (req, res) => {
-  try {
-    const { refreshToken } = req.cookies;
-    if (!refreshToken) {
-      return res.status(401).json({ message: "There Is No Refresh Token" });
-    }
-    const decoded = jwt.verify(refreshToken, process.env.RET);
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const accessToken = jwt.sign(
-      { userId: user._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-    return res.json({ accessToken });
+    await user.save();
+
+    res.json({ message: "Successfully created account" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-const LogoutController = (req, res) => {
-  refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/refresh-token",
+      maxAge: 7 * 24 * 60 * 60 * 1000,  
+    });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: 15 * 60 * 1000,  
+    });
+
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+      token: accessToken
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const refreshAccessToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      const refreshToken = generateRefreshToken(user);
+
+      const accessToken = generateAccessToken(user);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        path: "/refresh-token",
+        maxAge: 7 * 24 * 60 * 60 * 1000,  
+      });
+  
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        path: "/",
+        maxAge: 15 * 60 * 1000,  
+      });
+
+      res.json({accessToken: accessToken });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const logoutUser = (req, res) => {
+  res.clearCookie("refreshToken", { path: "/refresh-token" });
+  res.clearCookie("accessToken", { path: "/" });
   res.sendStatus(204);
 };
+
 module.exports = {
-  LoginController,
-  RegController,
-  LogoutController,
-  varify,
-  Refresh,
+  registerUser,
+  loginUser,
+  refreshAccessToken,
+  logoutUser,
 };
