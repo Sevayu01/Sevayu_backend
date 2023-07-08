@@ -105,7 +105,7 @@ const Schema = new mongoose.Schema(
         },
       ],
     },
-    BloodBank: [
+    BloodBank: 
       {
         type: [
           {
@@ -115,7 +115,7 @@ const Schema = new mongoose.Schema(
           },
         ],
       },
-    ],
+    
   },
   { timestamps: true }
 );
