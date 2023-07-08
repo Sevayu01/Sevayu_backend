@@ -13,19 +13,6 @@ const port = process.env.PORT || 5000;
 dotenv.config({ path: './config/config.env' });
 const uri = process.env.uri;
 
-// app.get("/api/search/:item", async (req, res) => {
-//   try {
-//     const item = await axios.get(
-//       `https://searchme.onrender.com/product/search/${req.params.item}`
-//     );
-//     return res.json(item.data);
-//   }
-//   catch (e) {
-//     console.log(e);
-//   }
-// });
-
-
 /* register the middleware functions for the routes */
 
 app.use('/api/search', require('./routes/search'));
