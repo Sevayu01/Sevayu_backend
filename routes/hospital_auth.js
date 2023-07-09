@@ -1,10 +1,10 @@
 const express = require('express'); 
 const router = express.Router();
 
-const {loginController} = require('../controllers/hospital_auth');
-const {regController} = require('../controllers/hospital_auth');
-const {logoutController} = require('../controllers/hospital_auth');
-const {refresh} = require('../controllers/hospital_auth');
+const {loginController} = require('../controllers/hospitalAuth');
+const {regController} = require('../controllers/hospitalAuth');
+const {logoutController} = require('../controllers/hospitalAuth');
+const {refresh} = require('../controllers/hospitalAuth');
 
 router.post('/register', regController); 
 router.post('/login', loginController);

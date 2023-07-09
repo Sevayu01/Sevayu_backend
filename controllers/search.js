@@ -1,11 +1,12 @@
 const client = require('../config/search')
 
 const find =async (req,res) =>{
-    client.index('Hospitals').search(text).then((res) =>{
-        res.json({data:res.hits})
+    const text = req.query.text;
+    client.index('Hospitals').search(text).then((data) =>{
+        res.json({data:data.hits})
     }) 
 
 }
 
 
-module.exports = {save,find}    
+module.exports = {find}    

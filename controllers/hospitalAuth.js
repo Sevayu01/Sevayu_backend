@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Hospital = require("../models/Hospital");
+const client = require('../config/search')
 
 const generateAccessToken = (hospital) => {
   return jwt.sign({ hospitalId: hospital._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
@@ -122,6 +123,11 @@ const regController = async (req, res) => {
 
     await newHospital.save();
 
+   
+        client.index('Hospitals').addDocuments(newHospital)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err))
+   
     const accessToken = generateAccessToken(newHospital);
     const refreshToken = generateRefreshToken(newHospital);
 
