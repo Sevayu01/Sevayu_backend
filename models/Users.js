@@ -12,25 +12,28 @@ const Schema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    city:{
+    city: {
         type: String,
         required: true,
     }
     ,
-    street:{
-        type : String, 
-        required:true
+    street: {
+        type: String,
+        required: true
     }
     ,
-    state:{
-        type : String, 
-        required : true,
+    state: {
+        type: String,
+        required: true,
     }
-    
+
     ,
     date: {
         type: Date,
         default: Date.now,
     },
-},{timestamps:true})
+    deviceToken: {
+        type: String,
+    },
+}, { timestamps: true })
 module.exports = mongoose.model('User', Schema);

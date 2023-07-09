@@ -1,12 +1,5 @@
 const router = require('express').Router();
+const search = require('../controllers/search');
 
-router.get('/:id',async (req,res)=>{
-    try{
-        const item = await axios.get(`https://searchme.onrender.com/product/search/${req.params.item}`);
-        return res.json(item.data);
-    }
-    catch(e){
-        console.log(e);
-    }
-})
+router.get('/:id', search)
 module.exports = router;
