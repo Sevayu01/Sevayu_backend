@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "melisearch": "MEILISEARCH_MASTER_KEY=$(node -p 'require(`./config.js`).meilisearch.masterKey') ./meilisearch",
+    "app": "nodemon app.js",
+    "start": "npm-run-all -p melisearch app"
   },
   "repository": {
     "type": "git",
@@ -35,5 +36,9 @@
     "nodemon": "^2.0.22",
     "socket.io": "^4.7.1",
     "xss-clean": "^0.1.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "npm-run-all": "^4.1.5"
   }
 }
