@@ -6,5 +6,5 @@ const getuser = async (req, res) => {
     } catch (err) {
         res.json({ message: err });
     }
-    }
-    module.exports = {getuser}; 
+}
+module.exports = { getuser }; 

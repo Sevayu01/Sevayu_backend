@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "melisearch": "MEILISEARCH_MASTER_KEY=$(node -p 'require(`./config.js`).meilisearch.masterKey') ./meilisearch",
-    "app": "nodemon app.js",
-    "start": "npm-run-all -p melisearch app"
+    "start": "nodemon app.js",
+    "app": "npm-run-all -p melisearch app"
   },
   "repository": {
     "type": "git",

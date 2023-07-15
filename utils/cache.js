@@ -16,7 +16,7 @@ const getFromCache = (key) => {
 const setInCache = (key, data, expiration = 3600) => {
   return new Promise((resolve, reject) => {
     const value = JSON.stringify(data);
-    redisClient.setex(key, expiration, value, (err) => {
+    redisClient.set(key, expiration, value, (err) => {
       if (err) {
         console.error('Error setting data in Redis cache:', err);
         reject(err);
