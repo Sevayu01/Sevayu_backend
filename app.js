@@ -6,7 +6,7 @@ const socketIO = require("socket.io");
 const cors = require("cors");
 const morgan = require("morgan");
 const connectDB = require('./config/connectDB');
-const consultationSocket = require('./sockets/consultationSocket');
+// const consultationSocket = require('./sockets/consultationSocket');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -38,4 +38,4 @@ server.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
 });
 
-consultationSocket(io);
+// consultationSocket(io);
