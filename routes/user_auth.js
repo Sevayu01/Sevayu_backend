@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const User = require('../models/Users');
-// const Hospital = require('../models/Hospitals');
 const {loginUser} = require('../controllers/userAuth');
 const {registerUser} = require('../controllers/userAuth');
 const {logoutUser} = require('../controllers/userAuth');

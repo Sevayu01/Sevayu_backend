@@ -38,5 +38,4 @@ server.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
 });
 
-// Configure Socket.IO
 consultationSocket(io);

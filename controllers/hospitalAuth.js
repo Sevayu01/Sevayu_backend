@@ -122,10 +122,9 @@ const regController = async (req, res) => {
     });
 
     await newHospital.save();
-
-   
-        client.index('Hospitals').addDocuments(newHospital)
-        .then((res) => console.log(res))
+    
+        client.index('Hospital').addDocuments(newHospital)
+        .then((res) => {})
         .catch((err) => console.log(err))
    
     const accessToken = generateAccessToken(newHospital);
@@ -137,7 +136,7 @@ const regController = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
 
-    res.json({ accessToken });
+    return res.json({ accessToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
