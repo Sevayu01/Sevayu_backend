@@ -1,105 +1,101 @@
-const Hospital = require("../models/Hospital");
+const HospitalService = require("../services/labtest");
 
-const GetController = async (req, res) => {
+const getTests = async (req, res) => {
   try {
-    const { hospitalid } = req.params;
-    const hospital = await Hospital.findById(hospitalid);
+    const { hospitalId } = req.params;
+    const hospital = await HospitalService.getHospital(hospitalId);
+    
+    if (!hospital) {
+      return res.status(404).json({ message: 'Hospital not found' });
+    }
+    
     const testList = hospital.Test;
-    res.json({test: testList});
+    res.json({ test: testList });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-const GetSingleTestController = async (req, res) => {
+const getSingleTest = async (req, res) => {
   try {
-    const { hospitalid, testid } = req.params;
+    const { hospitalId, testId } = req.params;
 
-    const hospital = await Hospital.findOne(
-      { _id: hospitalid },
-      { Test: { $elemMatch: { _id: testid } } }
-    );
+    const hospital = await HospitalService.getHospital(hospitalId);
 
     if (!hospital) {
       return res.status(404).json({ message: 'Hospital not found' });
     }
 
-    const test = hospital.Test[0];
+    const test = hospital.Test.find(t => t._id.toString() === testId);
+
     if (!test) {
       return res.status(404).json({ message: 'Test not found' });
     }
 
-    res.json({test : test});
+    res.json({ test: test });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-
-const RegController = async (req, res) => {
+const registerTest = async (req, res) => {
   try {
-    const { hospitalid, Test } = req.body;
+    const { hospitalId, Test } = req.body;
 
-    const updatedHospital = await Hospital.findByIdAndUpdate(
-      hospitalid,
-      { $push: { Test } },
-      { new: true }
-    );
+    const updatedHospital = await HospitalService.addTestToHospital(hospitalId, Test);
 
     if (!updatedHospital) {
       return res.status(404).json({ message: 'Hospital not found' });
     }
 
-    res.json({msg : "Successfully added test"});
+    res.json({ msg: "Successfully added test" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-const DeleteController = async (req, res) => {
+const deleteTest = async (req, res) => {
   try {
-    const { hospitalid} = req.body;
-   const Testid = req.params.id;
+    const { hospitalId } = req.body;
+    const testId = req.params.id;
 
-    const updatedHospital = await Hospital.findByIdAndUpdate(
-      hospitalid,
-      { $pull: { Test: { _id: Testid } } },
-      { new: true }
-    );
+    const updatedHospital = await HospitalService.removeTestFromHospital(hospitalId, testId);
 
     if (!updatedHospital) {
       return res.status(404).json({ message: 'Hospital not found' });
     }
 
-    res.json({updatedHospital : updatedHospital});
+    res.json({ updatedHospital: updatedHospital });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-const UpdateController = async (req, res) => {
+const updateTest = async (req, res) => {
   try {
-    const { hospitalid, Testid, ...updateData } = req.body;
+    const { hospitalId, testId, ...updateData } = req.body;
 
-    const updatedHospital = await Hospital.findOneAndUpdate(
-      { _id: hospitalid, 'Test._id': Testid },
-      { $set: { 'Test.$': {  id:'Test.id',...updateData } } },
-      { new: true }
-    );
+    const updatedHospital = await HospitalService.updateTestInHospital(hospitalId, testId, updateData);
 
     if (!updatedHospital) {
       return res.status(404).json({ message: 'Hospital or Test not found' });
     }
 
-    res.json({updatedTest : updatedHospital.Test});
+    res.json({ updatedTest: updatedHospital.Test });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-module.exports = { GetController,GetSingleTestController, RegController, DeleteController, UpdateController };
+module.exports = {
+  getTests,
+  getSingleTest,
+  registerTest,
+  deleteTest,
+  updateTest,
+};
