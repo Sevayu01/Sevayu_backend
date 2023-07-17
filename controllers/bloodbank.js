@@ -1,70 +1,65 @@
-const { Types } = require('mongoose');
-const Hospital = require("../models/Hospital");
-const mongoose = require("mongoose");
+const {
+  GetBloodBankData,
+  addBloodBank,
+  deleteBloodBank,
+  updateBloodBank
+} = require("../services/bloodbank");
 
-const GetController = async (req, res) => {
-  const hosid = req.body.hospitalid;
-  const find = await Hospital.findById(hosid, { BloodBank: 1, _id: 0 });
-  res.json(find);
-};
-
-const NewBloodBank = async (req, res) => {
+const getController = async (req, res) => {
   try {
-    const BloodBankData = req.body.BloodBank;
- 
-    const hosid = req.body.hospitalid;
- 
-    let find = await Hospital.findById(hosid);
-    find.BloodBank = [...find.BloodBank, BloodBankData];
-    await find.save();
-    res.json({msg:"Successfull added BloodBank"});
+    const hospitalId = req.params.hospitalid;
+    const findBloodBankData = await GetBloodBankData(hospitalId);
+    res.json({BloodBank: findBloodBankData.BloodBank});
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-const DeleteController = async (req, res) => {
+const newBloodBank = async (req, res) => {
+  try {
+    const bloodBankData = req.body.BloodBank;
+    const hospitalId = req.body.hospitalid;
+    const result = await addBloodBank(hospitalId, bloodBankData);
+    res.json({ msg: "Successfully added BloodBank" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteController = async (req, res) => {
   try {
     const { hospitalid } = req.body;
-    const BloodBankid = req.params.BloodBankid;
-    const updatedHospital = await Hospital.findByIdAndUpdate(
-      hospitalid,
-      { $pull: { BloodBank: { _id: new Types.ObjectId(BloodBankid) } } },
-      { new: true }
-    );
-    if (!updatedHospital) {
-      return res.status(404).json({ message: 'Hospital not found' });
+    const bloodBankid = req.params.BloodBankid;
+    const result = await deleteBloodBank(hospitalid, bloodBankid);
+    if (result === null) {
+      return res.status(404).json({ message: "Hospital not found" });
     }
-    res.json({BloodBank : updatedHospital.BloodBank});
+    res.json({ BloodBank: result.BloodBank });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
-const UpdateController = async (req, res) => {
+
+const updateController = async (req, res) => {
   try {
     const { hospitalid, BloodBankid, ...updateData } = req.body;
-
-    const updatedHospital = await Hospital.findOneAndUpdate(
-      { _id: hospitalid, 'BloodBank._id': BloodBankid },
-      { $set: { 'BloodBank.$': updateData } },
-      { new: true }
-    );
-
-    if (!updatedHospital) {
-      return res.status(404).json({ message: 'Hospital or BloodBank not found' });
+    const result = await updateBloodBank(hospitalid, BloodBankid, updateData);
+    if (result === null) {
+      return res.status(404).json({ message: "Hospital or BloodBank not found" });
     }
-
-    res.json({BloodBank: updatedHospital.BloodBank});
+    res.json({ BloodBank: result.BloodBank });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 module.exports = {
-  GetController,
-  NewBloodBank,
-  DeleteController,
-  UpdateController,
+  getController,
+  newBloodBank,
+  deleteController,
+  updateController,
 };

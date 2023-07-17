@@ -1,5 +1,5 @@
 const Hospital = require('../models/Hospital');
-const { getHospitalById } = require('../services/hospital');
+const { getHospitalById,departmentNames } = require('../services/hospital');
 const logger = require('.././utils/logger');
 
 const gethospital = async (req, res) => {
@@ -14,20 +14,11 @@ const gethospital = async (req, res) => {
 };
 const getdepartments = async (req, res) => {
   try {
-    const departments = await Hospital.aggregate([
-      { $match: { _id: req.params.id } },
-      { $unwind: '$doctors' },
-      { $group: { _id: '$doctors.department' } },
-      { $project: { _id: 0, department: '$_id' } }
-    ]);
-
-    if (departments.length === 0) {
-      return res.json({ message: 'No Departments found' });
-    }
-
-    const departmentNames = departments.map((dept) => dept.department);
+    const id = req.params.id;
+    const departmentNames = await departmentNames(id);
     res.json({ departments: departmentNames });
   } catch (err) {
+    logger.error(err.message);
     res.json({ message: err });
   }
 };
