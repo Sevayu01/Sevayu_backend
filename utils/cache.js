@@ -1,47 +1,25 @@
-const redisClient = require('../config/redisconf');
-
-const getFromCache = (key) => {
-  return new Promise((resolve, reject) => {
-    redisClient.get(key, (err, data) => {
-      if (err) {
-        console.error('Error retrieving data from Redis cache:', err);
-        reject(err);
-      } else {
-        resolve(data ? JSON.parse(data) : null);
-      }
-    });
-  });
-};
+const { redisClient } = require('../config/redisconf');
 
 const setInCache = (key, data, expiration = 3600) => {
-  return new Promise((resolve, reject) => {
-    const value = JSON.stringify(data);
-    redisClient.set(key, expiration, value, (err) => {
-      if (err) {
-        console.error('Error setting data in Redis cache:', err);
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
+  const value = JSON.stringify(data);
+  return redisClient.set(key, value, 'EX', expiration);
+};
+
+const getFromCache = (key) => {
+  return redisClient.get(key).then((value) => {
+    if (value) {
+      return JSON.parse(value);
+    }
+    return null;
   });
 };
 
 const deleteFromCache = (key) => {
-  return new Promise((resolve, reject) => {
-    redisClient.del(key, (err) => {
-      if (err) {
-        console.error('Error deleting data from Redis cache:', err);
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+  return redisClient.del(key);
 };
 
 module.exports = {
-  getFromCache,
   setInCache,
+  getFromCache,
   deleteFromCache,
 };

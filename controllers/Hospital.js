@@ -1,13 +1,17 @@
 const Hospital = require('../models/Hospital');
+const { getHospitalById } = require('../services/hospital');
+const logger = require('.././utils/logger');
+
 const gethospital = async (req, res) => {
   try {
     const id = req.params.id;
-        const hospital = await Hospital.findById(id,{doctors:0,Test:0,BloodBank:0,createdAt:0,updatedAt:0,__v:0,updatedAt:0});
-        res.json(hospital);
+    const hospital = await getHospitalById(id);
+    res.status(200).json({ hospitalData: hospital });
   } catch (err) {
-    res.json({ message: err });
+    logger.error(err.message);
+    res.status(500).json({ message: err });
   }
-}
+};
 const getdepartments = async (req, res) => {
   try {
     const departments = await Hospital.aggregate([
@@ -30,4 +34,4 @@ const getdepartments = async (req, res) => {
 
 
 
-module.exports = {gethospital, getdepartments}
+module.exports = { gethospital, getdepartments }
