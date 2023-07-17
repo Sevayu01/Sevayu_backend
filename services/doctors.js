@@ -1,4 +1,5 @@
 const Hospital = require("../models/Hospital");
+const { setInCache, getFromCache, deleteFromCache } = require(".././utils/cache");
 
 const getDoctorsByHospitalId = async (hospitalId) => {
   try {
