@@ -1,10 +1,10 @@
-const Hospital  = require('../models/Hospital');
+const Hospital = require('../models/Hospital');
 const { setInCache, getFromCache } = require('.././utils/cache');
 const logger = require('.././utils/logger');
 
 const getHospitalById = async (id) => {
     try {
-        const cacheKey = `hospital:${id}`;
+        const cacheKey = `${id}: hospital`;
         const hosptl = await getFromCache(cacheKey);
         if (hosptl) {
             return hosptl;
@@ -30,6 +30,33 @@ const getHospitalById = async (id) => {
     }
 };
 
+const departmentNames = async (id) => {
+    try {
+        const cacheKey = `${id}: departments`;
+        const departments = await getFromCache(cacheKey);
+        if (departments) {
+            return departments;
+        }
+        const departmentsNames = await Hospital.aggregate([
+            { $match: { _id: req.params.id } },
+            { $unwind: '$doctors' },
+            { $group: { _id: '$doctors.department' } },
+            { $project: { _id: 0, department: '$_id' } }
+        ]);
+
+        if (departmentsNames.length === 0) {
+            return res.json({ message: 'No Departments found' });
+        }
+
+        const departmentNamesArray = departmentsNames.map((dept) => dept.department);
+        await setInCache(cacheKey, departmentNamesArray);
+
+        return departmentNames;
+    } catch (err) {
+        logger.error(err.message);
+    }
+};
 module.exports = {
     getHospitalById,
+    departmentNames
 };

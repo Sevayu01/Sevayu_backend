@@ -1,14 +1,14 @@
 const router = require("express").Router();
-const { RegController, UpdateController, DeleteController, GetController } = require("../controllers/doctors");
+const { getDoctorsByHospitalId, registerDoctor, deleteDoctor, updateDoctor } = require("../controllers/doctors");
 
 
 const verifyAuth = require("../middleware/verifyAuth");
 const authenticateHospital = require("../middleware/hospitalAuth");
 
-router.post("/", authenticateHospital, RegController);
-router.put("/", authenticateHospital, UpdateController);
-router.delete("/:doctorid", authenticateHospital, DeleteController);
-router.get("/", verifyAuth, GetController);
-router.get("/:hospitalid", verifyAuth, GetController);
+router.post("/", authenticateHospital, registerDoctor);
+router.put("/", authenticateHospital, updateDoctor);
+router.delete("/:doctorid", authenticateHospital, deleteDoctor);
+router.get("/", verifyAuth, getDoctorsByHospitalId);
+router.get("/:hospitalid", verifyAuth, getDoctorsByHospitalId);
 
 module.exports = router;
