@@ -1,12 +1,16 @@
 const Hospital = require("../models/Hospital");
-const { setInCache, getFromCache, deleteFromCache } = require(".././utils/cache");
+const {
+  setInCache,
+  getFromCache,
+  deleteFromCache,
+} = require(".././utils/cache");
 
 const getDoctorsByHospitalId = async (hospitalId) => {
   try {
     const cacheKey = `${hospitalId}: doctors`;
     const doctorsByid = await getFromCache(cacheKey);
     if (doctorsByid) {
-        return doctorsByid;
+      return doctorsByid;
     }
     const hospital = await Hospital.findOne({ _id: hospitalId });
     const doctors = hospital.doctors;
@@ -28,7 +32,7 @@ const registerDoctor = async (hospitalId, doctorData) => {
     const updatedHospital = await Hospital.findOneAndUpdate(
       { _id: hospitalId, "doctors.id": { $ne: doctorData.id } },
       { $addToSet: { doctors: doctorData } },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedHospital) {
@@ -48,7 +52,7 @@ const deleteDoctor = async (hospitalId, doctorId) => {
     const updatedHospital = await Hospital.findByIdAndUpdate(
       hospitalId,
       { $pull: { doctors: { _id: doctorId } } },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedHospital) {
@@ -61,14 +65,28 @@ const deleteDoctor = async (hospitalId, doctorId) => {
   }
 };
 
-const updateDoctor = async (hospitalId, doctorId, name, email, password, contact) => {
+const updateDoctor = async (
+  hospitalId,
+  doctorId,
+  name,
+  email,
+  password,
+  contact,
+) => {
   try {
     const cacheKey = `${hospitalId}: doctors`;
     await deleteFromCache(cacheKey);
     const updatedHospital = await Hospital.findOneAndUpdate(
-      { _id: hospitalId, 'doctors._id': doctorId },
-      { $set: { 'doctors.$.name': name, 'doctors.$.email': email, 'doctors.$.password': password, 'doctors.$.contact': contact } },
-      { new: true }
+      { _id: hospitalId, "doctors._id": doctorId },
+      {
+        $set: {
+          "doctors.$.name": name,
+          "doctors.$.email": email,
+          "doctors.$.password": password,
+          "doctors.$.contact": contact,
+        },
+      },
+      { new: true },
     );
 
     if (!updatedHospital) {

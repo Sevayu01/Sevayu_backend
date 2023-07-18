@@ -1,17 +1,18 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Hospital = require("../models/Hospital");
-const client = require('../config/search')
+const client = require("../config/search");
+const logger = require("../utils/logger");
 
-const generateAccessToken = (hospital) => {
-  return jwt.sign({ hospitalId: hospital._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
-};
+const generateAccessToken = (hospital) =>
+  jwt.sign({ hospitalId: hospital._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
 
-const generateRefreshToken = (hospital) => {
-  return jwt.sign({ hospitalId: hospital._id }, process.env.REFRESH_TOKEN_SECRET, {
+const generateRefreshToken = (hospital) =>
+  jwt.sign({ hospitalId: hospital._id }, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: "7d",
   });
-};
 
 const refreshTokens = [];
 
@@ -60,13 +61,13 @@ const loginController = async (req, res) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         path: "/refresh-token",
-        maxAge: 7 * 24 * 60 * 60 * 1000,  
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       res.json({
@@ -78,7 +79,7 @@ const loginController = async (req, res) => {
       res.status(400).json({ msg: "Invalid credentials" });
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error).message;
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -122,23 +123,27 @@ const regController = async (req, res) => {
     });
 
     await newHospital.save();
-    
-        client.index('Hospital').addDocuments(newHospital)
-        .then((res) => {})
-        .catch((err) => console.log(err))
-   
+
+    client
+      .index("Hospital")
+      .addDocuments(newHospital)
+      .then((result) => {
+        result;
+      })
+      .catch((err) => logger.error(err.message));
+
     const accessToken = generateAccessToken(newHospital);
     const refreshToken = generateRefreshToken(newHospital);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       path: "/refresh-token",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({ accessToken });
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -162,13 +167,13 @@ const refresh = async (req, res) => {
 
     return res.json({ accessToken });
   } catch (error) {
-    console.error(error);
+    logger.error(error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 const logoutController = (req, res) => {
-  refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
+  refreshTokens.filter((token) => token !== req.body.token);
   res.clearCookie("refreshToken", { path: "/refresh-token" });
   res.clearCookie("accessToken", { path: "/" });
   res.sendStatus(204);

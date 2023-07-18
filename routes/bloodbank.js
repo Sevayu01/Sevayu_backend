@@ -1,11 +1,10 @@
 const router = require("express").Router();
 const {
-    getController,
-    newBloodBank,
-    deleteController,
-    updateController,
+  getController,
+  newBloodBank,
+  deleteController,
+  updateController,
 } = require("../controllers/bloodbank");
-
 
 const verifyAuth = require("../middleware/verifyAuth");
 const authenticateHospital = require("../middleware/hospitalAuth");

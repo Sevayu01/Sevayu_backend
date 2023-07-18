@@ -1,10 +1,10 @@
-const winston = require('winston');
+const winston = require("winston");
 
 const logLevels = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'cyan',
-  debug: 'green',
+  error: "red",
+  warn: "yellow",
+  info: "cyan",
+  debug: "green",
 };
 
 const logger = winston.createLogger({
@@ -12,13 +12,12 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.colorize(),
-    winston.format.printf(({ level, message, timestamp }) => {
-      return `[${timestamp}] [${level.toUpperCase()}]: ${message}`;
-    })
+    winston.format.printf(
+      ({ level, message, timestamp }) =>
+        `[${timestamp}] [${level.toUpperCase()}]: ${message}`,
+    ),
   ),
-  transports: [
-    new winston.transports.Console(),
-  ],
+  transports: [new winston.transports.Console()],
 });
 
 module.exports = logger;
