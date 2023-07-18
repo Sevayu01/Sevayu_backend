@@ -1,16 +1,12 @@
-const firebaseAdmin = require('../config/firebase');
-const Consultation = require('../models/Consultation');
+const firebaseAdmin = require("../config/firebase");
+const Consultation = require("../models/Consultation");
+const User = require("../models/Users");
+const logger = require("../utils/logger");
 
 const scheduleConsultation = async (req, res) => {
   try {
-    const {
-      patientName,
-      fromUser,
-      department,
-      hospital,
-      date,
-      time,
-    } = req.body;
+    const { patientName, fromUser, department, hospital, date, time } =
+      req.body;
     const consultation = new Consultation({
       patientName,
       fromUser,
@@ -18,17 +14,18 @@ const scheduleConsultation = async (req, res) => {
       hospital,
       date,
       time,
-      status: 'pending',
-      prescription: '',
-      report: '',
-      payment: '',
+      status: "pending",
+      prescription: "",
+      report: "",
+      payment: "",
     });
-    await consultation.save(); 
-    return res.status(200).json({ message: 'Consultation scheduled successfully' });
-
+    await consultation.save();
+    return res
+      .status(200)
+      .json({ message: "Consultation scheduled successfully" });
   } catch (error) {
-    console.error('Error scheduling consultation:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    logger.error("Error scheduling consultation:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -39,7 +36,7 @@ const updateConsultationStatus = async (req, res) => {
 
     const consultation = await Consultation.findById(consultationId);
     if (!consultation) {
-      return res.status(404).json({ message: 'Consultation not found' });
+      return res.status(404).json({ message: "Consultation not found" });
     }
 
     consultation.status = status;
@@ -49,7 +46,7 @@ const updateConsultationStatus = async (req, res) => {
     if (user && user.deviceToken) {
       const message = {
         notification: {
-          title: 'Your Consultation Status Update',
+          title: "Your Consultation Status Update",
           body: `Your consultation has been ${status}.`,
         },
         token: user.deviceToken,
@@ -58,10 +55,12 @@ const updateConsultationStatus = async (req, res) => {
       await firebaseAdmin.messaging().send(message);
     }
 
-    res.status(200).json({ message: 'Consultation status updated successfully' });
+    res
+      .status(200)
+      .json({ message: "Consultation status updated successfully" });
   } catch (error) {
-    console.error('Error updating consultation status:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    logger.error("Error updating consultation status:", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
-module.exports = {updateConsultationStatus,scheduleConsultation}
+module.exports = { updateConsultationStatus, scheduleConsultation };

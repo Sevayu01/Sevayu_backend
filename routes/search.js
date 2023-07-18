@@ -1,5 +1,5 @@
-const router = require('express').Router();
-const {find} = require('../controllers/search');
+const router = require("express").Router();
+const { find } = require("../controllers/search");
 
-router.get('/', find)
+router.get("/", find);
 module.exports = router;

@@ -49,7 +49,7 @@ const Schema = new mongoose.Schema(
           id: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
           },
           name: {
             type: String,
@@ -79,7 +79,7 @@ const Schema = new mongoose.Schema(
           },
           days: {
             type: [String],
-            required: true
+            required: true,
           },
         },
       ],
@@ -89,7 +89,7 @@ const Schema = new mongoose.Schema(
         {
           id: {
             type: String,
-            required: true
+            required: true,
           },
           name: {
             type: String,
@@ -106,18 +106,16 @@ const Schema = new mongoose.Schema(
         },
       ],
     },
-    BloodBank: 
-      {
-        type: [
-          {
-            type: { type: String },
-            available: { type: Boolean },
-            contact: { type: String },
-          },
-        ],
-      },
-    
+    BloodBank: {
+      type: [
+        {
+          type: { type: String },
+          available: { type: Boolean },
+          contact: { type: String },
+        },
+      ],
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 module.exports = mongoose.model("Hospital", Schema);

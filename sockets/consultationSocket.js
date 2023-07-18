@@ -1,21 +1,18 @@
-const Consultation = require('../models/Consultation');
-const firebaseAdmin = require('../config/firebase');
-const User = require('../models/Users');
-const Hospital = require('../models/Hospital');
+const Consultation = require("../models/Consultation");
+const firebaseAdmin = require("../config/firebase");
+const User = require("../models/Users");
+const logger = require("../utils/logger");
 const hospitalSockets = new Map();
 module.exports = (io) => {
-  io.on('connection', (socket) => {
-
-    console.log('New connection established:', socket.id);
-
-    socket.on('joinHospitalRoom', (hospitalId) => {
+  io.on("connection", (socket) => {
+    logger.info("Socket connected:", socket.id);
+    socket.on("joinHospitalRoom", (hospitalId) => {
       hospitalSockets.set(hospitalId.toString(), socket.id);
-      console.log(`Hospital ${hospitalId} joined the room.`);
     });
-  
-    socket.on('scheduleConsultation', async (requestData) => {
+
+    socket.on("scheduleConsultation", async (requestData) => {
       try {
-        console.log(JSON.parse(requestData.body))
+        logger.info("Consultation scheduled:", requestData);
         const consultation = new Consultation({
           patientName: requestData.patientName,
           fromUser: requestData.fromUser,
@@ -23,33 +20,34 @@ module.exports = (io) => {
           hospital: requestData.hospital,
           date: requestData.date,
           time: requestData.time,
-          status: 'pending',
-          prescription: '',
-          report: '',
-          payment: '',
+          status: "pending",
+          prescription: "",
+          report: "",
+          payment: "",
         });
         await consultation.save();
-        io.emit('newConsultation', consultation);
-        const hospitalSocketId = hospitalSockets.get(consultation.hospital.toString());
+        io.emit("newConsultation", consultation);
+        const hospitalSocketId = hospitalSockets.get(
+          consultation.hospital.toString(),
+        );
         if (hospitalSocketId) {
-          io.to(hospitalSocketId).emit('consultationRequest', consultation);
-          console.log(`Consultation request sent to Hospital ${consultation.hospital}`);
+          io.to(hospitalSocketId).emit("consultationRequest", consultation);
+          logger.info("Consultation scheduled:", consultation);
         } else {
-          console.log(`Hospital ${consultation.hospital} is not connected.`);
+          logger.info("Consultation scheduled:", consultation);
         }
-  
 
-        console.log('Consultation scheduled:');
+        logger.info("Consultation scheduled:", consultation);
       } catch (error) {
-        console.error('Error scheduling consultation:');
+        logger.error("Error scheduling consultation:", error.message);
       }
     });
 
-    socket.on('updateConsultationStatus', async (data) => {
+    socket.on("updateConsultationStatus", async (data) => {
       try {
         const consultation = await Consultation.findById(data.consultationId);
         if (!consultation) {
-          console.error('Consultation not found');
+          logger.error("Consultation not found");
           return;
         }
 
@@ -59,26 +57,28 @@ module.exports = (io) => {
         if (user && user.deviceToken) {
           const message = {
             notification: {
-              title: 'Your Consultation Status Update',
+              title: "Your Consultation Status Update",
               body: `Your consultation has been ${data.status}.`,
             },
             token: user.deviceToken,
           };
-    
+
           await firebaseAdmin.messaging().send(message);
         }
-        res.status(200).json({ message: 'Consultation status updated successfully' });
+        logger.info("Consultation status updated:", consultation);
 
-        io.to(consultation.hospital.toString()).emit('consultationStatusUpdate', consultation);
-        console.log('Consultation status updated:', consultation);
+        io.to(consultation.hospital.toString()).emit(
+          "consultationStatusUpdate",
+          consultation,
+        );
+        logger.info("Consultation status updated:", consultation);
       } catch (error) {
-        console.error('Error updating consultation status:', error);
+        logger.error("Error updating consultation status:", error.message);
       }
     });
 
-    socket.on('disconnect', () => {
-        console.log('Socket disconnected:', socket.id);
-        }
-    );
+    socket.on("disconnect", () => {
+      logger.info("Socket disconnected:", socket.id);
+    });
   });
 };

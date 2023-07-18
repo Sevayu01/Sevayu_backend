@@ -1,6 +1,5 @@
-const Hospital = require('../models/Hospital');
-const { getHospitalById,departmentNames } = require('../services/hospital');
-const logger = require('.././utils/logger');
+const { getHospitalById, departmentNames } = require("../services/hospital");
+const logger = require(".././utils/logger");
 
 const gethospital = async (req, res) => {
   try {
@@ -15,14 +14,12 @@ const gethospital = async (req, res) => {
 const getdepartments = async (req, res) => {
   try {
     const id = req.params.id;
-    const departmentNames = await departmentNames(id);
-    res.json({ departments: departmentNames });
+    const departmentName = await departmentNames(id);
+    res.json({ departments: departmentName });
   } catch (err) {
     logger.error(err.message);
     res.json({ message: err });
   }
 };
 
-
-
-module.exports = { gethospital, getdepartments }
+module.exports = { gethospital, getdepartments };
