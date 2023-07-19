@@ -37,5 +37,5 @@ const port = process.env.PORT || 5000;
 server.listen(port, () => {
   logger.info(`Server started on http://localhost:${port}`);
 });
-
+module.exports = app;
 // consultationSocket(io);

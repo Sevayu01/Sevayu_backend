@@ -13,7 +13,7 @@ const verifyAuth = require("../middleware/verifyAuth");
 router.post("/", authenticateHospital, registerTest);
 router.put("/", authenticateHospital, updateTest);
 router.delete("/:id", authenticateHospital, deleteTest);
-router.get("/:hospitalId/:testId", verifyAuth, getSingleTest);
 router.get("/:hospitalId", verifyAuth, getTests);
+router.get("/:hospitalId/:testId", verifyAuth, getSingleTest);
 
 module.exports = router;

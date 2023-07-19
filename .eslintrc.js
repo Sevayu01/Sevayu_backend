@@ -2,6 +2,7 @@ module.exports = {
   env: {
     node: true,
     es2021: true,
+    mocha: true, // This enables the Mocha global variables
   },
   parserOptions: {
     ecmaVersion: 12,
@@ -9,6 +10,10 @@ module.exports = {
   },
   extends: ["eslint:recommended", "plugin:prettier/recommended"],
   plugins: ["prettier"],
+  globals: {
+    expect: "readonly",
+    request: "readonly",
+  },
   rules: {
     "prettier/prettier": "error",
     "no-console": "warn",

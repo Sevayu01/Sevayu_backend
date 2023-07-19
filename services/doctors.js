@@ -66,25 +66,35 @@ const deleteDoctor = async (hospitalId, doctorId) => {
 };
 
 const updateDoctor = async (
-  hospitalId,
-  doctorId,
-  name,
-  email,
-  password,
-  contact,
+   {
+      doctorid ,
+      hospitalid ,
+      name ,
+      experience ,
+      speciality ,
+      contact ,
+      department ,
+      Intime ,
+      Outtime ,
+      days 
+    }
 ) => {
   try {
-    const cacheKey = `${hospitalId}: doctors`;
+    const cacheKey = `${hospitalid}: doctors`;
     await deleteFromCache(cacheKey);
     const updatedHospital = await Hospital.findOneAndUpdate(
-      { _id: hospitalId, "doctors._id": doctorId },
+      { _id: hospitalid, "doctors._id": doctorid },
       {
         $set: {
           "doctors.$.name": name,
-          "doctors.$.email": email,
-          "doctors.$.password": password,
+          "doctors.$.experience": experience,
+          "doctors.$.speciality": speciality,
           "doctors.$.contact": contact,
-        },
+          "doctors.$.department": department,
+          "doctors.$.Intime": Intime,
+          "doctors.$.Outtime": Outtime,
+          "doctors.$.days": days,
+        },        
       },
       { new: true },
     );

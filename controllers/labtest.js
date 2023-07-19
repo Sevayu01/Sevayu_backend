@@ -3,13 +3,13 @@ const logger = require("../utils/logger");
 const getTests = async (req, res) => {
   try {
     const { hospitalId } = req.params;
-    const hospital = await HospitalService.getHospital(hospitalId);
+    const hospital = await HospitalService.getHospitalLabTest(hospitalId);
 
     if (!hospital) {
       return res.status(404).json({ message: "Hospital not found" });
     }
 
-    const testList = hospital.Test;
+    const testList = hospital;
     res.json({ test: testList });
   } catch (err) {
     logger.error(err.message);
@@ -53,7 +53,7 @@ const registerTest = async (req, res) => {
       return res.status(404).json({ message: "Hospital not found" });
     }
 
-    res.json({ msg: "Successfully added test" });
+    res.json({ test: updatedHospital.Test});
   } catch (err) {
     logger.error(err.message);
     res.status(500).json({ message: "Server error" });
@@ -74,7 +74,7 @@ const deleteTest = async (req, res) => {
       return res.status(404).json({ message: "Hospital not found" });
     }
 
-    res.json({ updatedHospital: updatedHospital });
+    res.json({ message: "LabTest has been removed" });
   } catch (err) {
     logger.error(err.message);
     res.status(500).json({ message: "Server error" });
