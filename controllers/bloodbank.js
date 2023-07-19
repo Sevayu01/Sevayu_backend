@@ -37,7 +37,7 @@ const deleteController = async (req, res) => {
     if (result === null) {
       return res.status(404).json({ message: "Hospital not found" });
     }
-    res.json({ BloodBank: result.BloodBank });
+    res.json({ message: "Successfully deleted bloodBank" });
   } catch (err) {
     logger.error(err.message);
     res.status(500).json({ message: "Server error" });

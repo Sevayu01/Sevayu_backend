@@ -2,6 +2,7 @@ const Hospital = require("../models/Hospital");
 const logger = require("../utils/logger");
 const { setInCache, getFromCache, deleteFromCache } = require("../utils/cache");
 const getHospitalLabTest = async (hospitalId) => {
+  try{
   const cacheKey = `${hospitalId}: labtest`;
   const labtest = await getFromCache(cacheKey);
   if (labtest) {
@@ -19,6 +20,10 @@ const getHospitalLabTest = async (hospitalId) => {
   await setInCache(cacheKey, hospitalLabTest);
 
   return hospitalLabTest;
+}catch(err){
+  logger.error(err.message);
+  return null;
+}
 };
 
 const addTestToHospital = async (hospitalId, test) => {

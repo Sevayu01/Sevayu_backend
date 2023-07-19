@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Hospital = require("../models/Hospital");
-const client = require("../config/search");
+// const client = require("../config/search");
 const logger = require("../utils/logger");
 
 const generateAccessToken = (hospital) =>
   jwt.sign({ hospitalId: hospital._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "1d",
   });
 
 const generateRefreshToken = (hospital) =>
@@ -100,7 +100,6 @@ const regController = async (req, res) => {
     } = req.body;
 
     const hospital = await Hospital.findOne({ email: email });
-
     if (hospital) {
       return res
         .status(400)
@@ -121,16 +120,7 @@ const regController = async (req, res) => {
       state,
       images,
     });
-
     await newHospital.save();
-
-    client
-      .index("Hospital")
-      .addDocuments(newHospital)
-      .then((result) => {
-        result;
-      })
-      .catch((err) => logger.error(err.message));
 
     const accessToken = generateAccessToken(newHospital);
     const refreshToken = generateRefreshToken(newHospital);
@@ -144,7 +134,7 @@ const regController = async (req, res) => {
     return res.json({ accessToken });
   } catch (error) {
     logger.error(error.message);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error });
   }
 };
 

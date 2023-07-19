@@ -37,10 +37,14 @@ const Schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
+    openingTime: {
+      type: String
+    },
+    closingTime: {
+      type: String
+    },
     images: {
       type: [{ id: { type: String }, url: { type: String } }],
-      required: true,
     },
 
     doctors: {
@@ -48,8 +52,6 @@ const Schema = new mongoose.Schema(
         {
           id: {
             type: String,
-            required: true,
-            unique: true,
           },
           name: {
             type: String,
