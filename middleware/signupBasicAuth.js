@@ -41,7 +41,7 @@ const BasicAuth = (req, res, next) => {
   }
 
   // Validate password complexity (at least 8
-  // characters, including letters, numbers, and special characters)
+  // characters, numbers, and special characters)
   const passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
   if (!passwordRegex.test(password)) {

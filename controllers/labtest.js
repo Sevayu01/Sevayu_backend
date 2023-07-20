@@ -53,7 +53,7 @@ const registerTest = async (req, res) => {
       return res.status(404).json({ message: "Hospital not found" });
     }
 
-    res.json({ test: updatedHospital.Test});
+    res.json({ test: updatedHospital.Test });
   } catch (err) {
     logger.error(err.message);
     res.status(500).json({ message: "Server error" });

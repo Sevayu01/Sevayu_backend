@@ -1,52 +1,34 @@
-const User = require("../models/Users");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const authService = require("../services/userAuth");
 const logger = require("../utils/logger");
-const generateAccessToken = (user) =>
-  jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
-  });
-
-const generateRefreshToken = (user) =>
-  jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "7d",
-  });
 
 const registerUser = async (req, res) => {
   try {
-    const { username, email, password, confirmPassword, street, city, state } =
-      req.body;
-
-    if (password !== confirmPassword) {
-      return res
-        .status(400)
-        .json({ message: "Password and Confirm Password do not match" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "This email is already associated with an account" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({
+    const {
       username,
       email,
-      password: hashedPassword,
+      password,
+      confirmPassword,
       street,
       city,
       state,
-    });
+      deviceToken,
+    } = req.body;
 
-    await user.save();
+    await authService.registerUser({
+      username,
+      email,
+      password,
+      confirmPassword,
+      street,
+      city,
+      state,
+      deviceToken,
+    });
 
     res.json({ message: "Successfully created account" });
   } catch (error) {
     logger.error(error.message);
-    res.status(500).json({ message: "Server error" });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -54,18 +36,10 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const { user, accessToken, refreshToken } = await authService.loginUser({
+      email,
+      password,
+    });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -88,8 +62,8 @@ const loginUser = async (req, res) => {
       token: accessToken,
     });
   } catch (error) {
-    logger.error(error);
-    res.status(500).json({ message: "Server error" });
+    logger.error(error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -101,30 +75,18 @@ const refreshAccessToken = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    jwt.verify(refreshtkn, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      const refreshToken = generateRefreshToken(user);
+    const { accessToken } = await authService.refreshAccessToken(refreshtkn);
 
-      const accessToken = generateAccessToken(user);
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        path: "/refresh-token",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        path: "/",
-        maxAge: 15 * 60 * 1000,
-      });
-
-      res.json({ accessToken: accessToken });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: 15 * 60 * 1000,
     });
+
+    res.json({ accessToken });
   } catch (error) {
-    logger.error(error);
-    res.status(500).json({ message: "Server error" });
+    logger.error(error.message);
+    res.status(403).json({ message: error.message });
   }
 };
 

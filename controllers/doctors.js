@@ -40,40 +40,35 @@ const deleteDoctor = async (req, res) => {
 
 const updateDoctor = async (req, res) => {
   try {
-    const {   
-      doctorid ,
-      hospitalid ,
-      name ,
-      experience ,
-      speciality ,
-      contact ,
-      department ,
-      Intime ,
-      Outtime ,
-      days 
+    const {
+      doctorid,
+      hospitalid,
+      name,
+      experience,
+      speciality,
+      contact,
+      department,
+      Intime,
+      Outtime,
+      days,
     } = req.body;
-    const updatedHospital = await hospitalService.updateDoctor(
-      {
-        doctorid ,
-        hospitalid ,
-        name ,
-        experience ,
-        speciality ,
-        contact ,
-        department ,
-        Intime ,
-        Outtime ,
-        days 
-      }
-    );
-
- 
-
+    const updatedHospital = await hospitalService.updateDoctor({
+      doctorid,
+      hospitalid,
+      name,
+      experience,
+      speciality,
+      contact,
+      department,
+      Intime,
+      Outtime,
+      days,
+    });
 
     res.json(updatedHospital);
   } catch (error) {
     logger.error(error.message);
-    res.status(500).json({ message: "Server error" , error : error});
+    res.status(500).json({ message: "Server error", error: error });
   }
 };
 
