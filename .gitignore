@@ -7,3 +7,4 @@ dumps
 meilisearch
 sevayu-admin-sdk.json
 package-lock.json
+config/config.env

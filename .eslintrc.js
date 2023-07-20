@@ -2,7 +2,7 @@ module.exports = {
   env: {
     node: true,
     es2021: true,
-    mocha: true, // This enables the Mocha global variables
+    mocha: true,
   },
   parserOptions: {
     ecmaVersion: 12,
@@ -19,6 +19,7 @@ module.exports = {
     "no-console": "warn",
     "no-unused-vars": "warn",
     "no-underscore-dangle": "off",
+    "no-useless-catch": "off",
     "prefer-const": "error",
     "arrow-body-style": "error",
     "no-shadow": "error",

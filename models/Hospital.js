@@ -38,10 +38,10 @@ const Schema = new mongoose.Schema(
       required: true,
     },
     openingTime: {
-      type: String
+      type: String,
     },
     closingTime: {
-      type: String
+      type: String,
     },
     images: {
       type: [{ id: { type: String }, url: { type: String } }],
@@ -52,6 +52,8 @@ const Schema = new mongoose.Schema(
         {
           id: {
             type: String,
+            required: true,
+            unique: true,
           },
           name: {
             type: String,

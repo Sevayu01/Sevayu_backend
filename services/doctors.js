@@ -65,20 +65,18 @@ const deleteDoctor = async (hospitalId, doctorId) => {
   }
 };
 
-const updateDoctor = async (
-   {
-      doctorid ,
-      hospitalid ,
-      name ,
-      experience ,
-      speciality ,
-      contact ,
-      department ,
-      Intime ,
-      Outtime ,
-      days 
-    }
-) => {
+const updateDoctor = async ({
+  doctorid,
+  hospitalid,
+  name,
+  experience,
+  speciality,
+  contact,
+  department,
+  Intime,
+  Outtime,
+  days,
+}) => {
   try {
     const cacheKey = `${hospitalid}: doctors`;
     await deleteFromCache(cacheKey);
@@ -94,7 +92,7 @@ const updateDoctor = async (
           "doctors.$.Intime": Intime,
           "doctors.$.Outtime": Outtime,
           "doctors.$.days": days,
-        },        
+        },
       },
       { new: true },
     );

@@ -1,26 +1,21 @@
 const Hospital = require("../../models/Hospital");
-const { HospitalData } = require("../testData");
+const User = require("../../models/Users");
 const logger = require("../../utils/logger");
-const congratulationsIcon = "\u{1F389}";
-const checkMark = "\u{2705}";
-const partyface = "\u{1F973}";
-const end = after((done) => {
-  Hospital.deleteOne({ email: HospitalData.email })
-    .then(() => {
-      logger.info(
-        checkMark +
-          congratulationsIcon +
-          partyface +
-          `All tests successfully completed!` +
-          congratulationsIcon +
-          congratulationsIcon,
-      );
-      done();
-      process.exit(0);
-    })
-    .catch((err) => {
-      logger.error(err.message);
-    });
+const { HospitalData, userData } = require("../testData");
+
+const end = async () => {
+  try {
+    await Hospital.deleteOne({ email: HospitalData.email });
+    await User.deleteOne({ email: userData.email });
+    logger.info("Test data cleanup successful.");
+    process.exit(0);
+  } catch (err) {
+    logger.error("Error cleaning up test data:", err.message);
+  }
+};
+
+after(async () => {
+  await end();
 });
 
 module.exports = { end };

@@ -8,7 +8,7 @@ const HospitalData = {
   street: "123 Main Street",
   city: "New York",
   state: "NY",
-  
+
   images: [
     {
       id: "1",
@@ -20,18 +20,17 @@ const HospitalData = {
     },
   ],
 };
-const Doctors = 
-  {
-    id: "doc1",
-    name: "Doctor 1",
-    experience: "5 years",
-    speciality: "Specialty 1",
-    contact: "Doctor 1 Contact",
-    department: "Department 1",
-    Intime: "9:00 AM",
-    Outtime: "5:00 PM",
-    days: ["Monday", "Wednesday", "Friday"],
-  }
+const Doctors = {
+  id: "doc1",
+  name: "Doctor 1",
+  experience: "5 years",
+  speciality: "Specialty 1",
+  contact: "Doctor 1 Contact",
+  department: "Department 1",
+  Intime: "9:00 AM",
+  Outtime: "5:00 PM",
+  days: ["Monday", "Wednesday", "Friday"],
+};
 const Test = [
   {
     id: "test1",
@@ -58,4 +57,14 @@ const BloodBank = [
     contact: "Blood Bank Contact B+",
   },
 ];
-module.exports = { HospitalData, Doctors, Test, BloodBank };
+const userData = {
+  username: "JohnDoe",
+  email: "john.doe@example.com",
+  password: "password123",
+  confirmPassword: "password123",
+  city: "New York",
+  street: "123 Main Street",
+  state: "NY",
+  deviceToken: "someRandomToken",
+};
+module.exports = { HospitalData, Doctors, Test, BloodBank, userData };
