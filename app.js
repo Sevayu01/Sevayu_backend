@@ -1,22 +1,22 @@
 const express = require("express");
 const http = require("http");
 const dotenv = require("dotenv");
-// const socketIO = require("socket.io");
+const socketIO = require("socket.io");
 const cors = require("cors");
 const morgan = require("morgan");
 const connectDB = require("./config/connectDB");
 const logger = require("./utils/logger");
-// const consultationSocket = require('./sockets/consultationSocket');
+const consultationSocket = require("./sockets/consultationSocket");
 
 dotenv.config({ path: "./config/config.env" });
 
 const app = express();
 const server = http.createServer(app);
-// const io = socketIO(server, {
-//   cors: {
-//     origin: "*",
-//   },
-// });
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(express.json());
 app.use(cors());
@@ -38,4 +38,4 @@ server.listen(port, () => {
   logger.info(`Server started on http://localhost:${port}`);
 });
 module.exports = app;
-// consultationSocket(io);
+consultationSocket(io);
