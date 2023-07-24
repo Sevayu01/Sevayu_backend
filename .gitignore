@@ -5,6 +5,6 @@ config.js
 data.ms
 dumps
 meilisearch
-sevayu-admin-sdk.json
+./src/config/sevayu-admin-sdk.json
 package-lock.json
-config/config.env
+./src/config/config.env
