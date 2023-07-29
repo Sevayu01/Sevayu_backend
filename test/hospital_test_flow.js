@@ -7,7 +7,7 @@ const { bloodBankTest } = require("./bloodBank/bloodBank.test");
 const { LabTestTest } = require("./labTest/labTest.test");
 const { searchHospitalTest } = require("./other/search.test");
 const { userTest } = require("./user.test");
-const logger = require("../utils/logger");
+const logger = require("../src/utils/logger");
 
 async function runTests() {
   try {

@@ -1,6 +1,6 @@
-const Hospital = require("../../models/Hospital");
-const User = require("../../models/Users");
-const logger = require("../../utils/logger");
+const Hospital = require("../../src/models/Hospital");
+const User = require("../../src/models/Users");
+const logger = require("../../src/utils/logger");
 const { HospitalData, userData } = require("../testData");
 
 const end = async () => {

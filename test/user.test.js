@@ -3,7 +3,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 const expect = chai.expect;
-const app = require("../app");
+const app = require("../src/app");
 
 const userTest = describe("User API Test", () => {
   it("should create a new User", async () => {

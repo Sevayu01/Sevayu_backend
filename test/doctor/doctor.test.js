@@ -3,7 +3,7 @@ const chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 const expect = chai.expect;
 const { getId, getToken } = require("../other/JWT");
-const app = require("../../app");
+const app = require("../../src/app");
 const { Doctors } = require("../testData");
 
 let doctorId;

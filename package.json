@@ -6,7 +6,7 @@
   "scripts": {
     "lint-check": "(eslint . --fix) && echo \"Linting checks completed successfully.\"",
     "start": "nodemon ./src/app.js",
-    "test": "(mocha ./src/test/hospital_test_flow.js --timeout 20000) && (node ./src//test/test_report.js --timeout 2000)",
+    "test": "(mocha ./test/hospital_test_flow.js --timeout 20000) && (node ./test/test_report.js --timeout 2000)",
     "app": "npm-run-all -p melisearch app"
   },
   "repository": {
