@@ -31,7 +31,7 @@ Sevayu Backend is a powerful and innovative platform that aims to solve the prob
 - Mocha and Chai (API Unit Testing)
 
 ## Getting Started
-Link of Deployed api : `www.sevayu.live`
+Link of Deployed api : <a href = 'www.sevayu.live' > www.sevayu.live </a>
 
 Follow these steps to get the Sevayu Backend up and running on your local machine:
 
