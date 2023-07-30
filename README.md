@@ -52,7 +52,7 @@ Follow these steps to get the Sevayu Backend up and running on your local machin
 8. Access the API at `http://localhost:5000`.
 
 ## API Endpoints
-The complete api endpoints and documentation can be found at : `Url of postman`
+The complete api endpoints and documentation can be found at : <a href = "https://documenter.getpostman.com/view/25705250/2s9XxtxEtk" > Documentation of API (ALL Endpoints result)</a>
 - **Hospital**: `/api/hospital`
 - **Hospital Authentication**: `/api/auth/hospital`
 - **Doctor**: `/api/doctor`
